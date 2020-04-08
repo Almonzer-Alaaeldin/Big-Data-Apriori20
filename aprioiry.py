@@ -1,12 +1,14 @@
 import numpy as np
 import itertools as itr
 
+# Global Variables
+final_counts = {}
 ############################# Start of Helper Functions ###############################
 
 def read_data_txt(file_path='ticdata2000.txt',data_size=(5822, 86)):
     ''' Read Training Data size=(5822, 86)'''
     # Prepare array for data
-    data = np.zeros(data_size)
+    data = np.zeros(data_size, dtype=np.dtype('U100'))
     
     # Read All The Data and fill the array
     datafile = open(file_path, 'r')
@@ -14,7 +16,7 @@ def read_data_txt(file_path='ticdata2000.txt',data_size=(5822, 86)):
     i = 0
     
     for line in datafile:
-        data[i] = [eval(val) for val in line.split()]
+        data[i] = [eval(val) if val.isnumeric() else val for val in line.split()]
         i += 1
     
     return data
@@ -46,7 +48,7 @@ def itemset_support(uniqueData, previous_itemsets=[], itemset_lvl=1):
                 if val in itemsets_count.keys():
                     itemsets_count[val] += 1
                 else:
-                    itemsets_count[val] = 0
+                    itemsets_count[val] = 1
                     
     elif itemset_lvl > 1:
         itemsets_count = {}
@@ -67,24 +69,29 @@ def itemset_support(uniqueData, previous_itemsets=[], itemset_lvl=1):
     # find items with unsufficient support       
     items_under_support = []
     for itemset in itemsets_count.keys():
-        if (itemsets_count[itemset] / uniqueData.shape[0]) < support:
+        if float(itemsets_count[itemset] / uniqueData.shape[0]) < support:
             items_under_support.append(itemset)
     
-    # remove items with unsufficient support
+    # remove items with insufficient support
     for itemset in items_under_support:
         del itemsets_count[itemset]
     
     if len(itemsets_count.keys()) == 0:
         # Stop Algorithm
-        return previous_itemsets
+        return
             
     else:
         itemset_lvl += 1
         itemsets = []
+        # print('')
+        # print(itemsets_count)
+        # print('')
+        # print(itemsets_count.keys())
         for item in itemsets_count.keys():
             itemsets += list(set(item.split(',')) - set(itemsets))
         
-        return itemset_support(uniqueData, itemsets, itemset_lvl)
+        itemset_support(uniqueData, itemsets, itemset_lvl)
+        final_counts.update(itemsets_count)
       
 ############################# End of Helper Functions ###############################
 
@@ -96,10 +103,12 @@ confidence = eval(input('Enter confidence: '))
 
 data = read_data_txt(file_path='ticdata2000.txt',data_size=(5822, 86))
 
-data_12 = set_apart_attr(slice_attr(data, SI))
+data = set_apart_attr(slice_attr(data, SI))
 
-items = itemset_support(data_12)
-        
-        
+# data = read_data_txt(file_path='test.txt',data_size=(3, 6))
+
+itemset_support(data)
+
+print(final_counts)
         
         
