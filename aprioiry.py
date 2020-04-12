@@ -1,5 +1,7 @@
 import numpy as np
 import itertools as itr
+import pprint 
+
 
 # Global Variables
 final_counts = {}
@@ -124,10 +126,13 @@ def generate_assoc_rules(itemset_lvl,mini_conf): # final_count will be global af
         rule = rule.replace(",,",",").replace(rule_saperator+",",rule_saperator)  # replace ",," with "," and remove first item comma 
         if rule[-1] == ',': rule = rule[:-1]  
         confidence= float (final_counts[key]) / final_counts[item] #calculate support
-        if(confidence >= mini_conf): 
-           entry= {"Rule":rule , "LHS":item ,"LHS count":final_counts[item] ,"set":key, "set count":final_counts[key], "confidence":confidence} 
+        if(confidence >= mini_conf):           #if it is above mini_conf will calc Lift and Leverage
+           RHS=rule[rule.find(rule_saperator)+len(rule_saperator):] #store right hand side set
+           Lift= float(final_counts[key])/(final_counts[item]*final_counts[RHS] )
+           Leverage= float(final_counts[key])-float(final_counts[item]*final_counts[RHS])
+           entry= {"Rule":rule , "LHS":item ,"LHS count":final_counts[item] ,"RHS":RHS ,"RHS count":final_counts[RHS] , "set":key, "set count":final_counts[key], "Lift":Lift , "Leverage":Leverage, "confidence":confidence} 
            assoc_rules.append(entry)
-
+           pprint.pprint(entry, width=1)
        
 
 
@@ -151,4 +156,3 @@ itemset_support(data)
 print(final_counts)
 ### test assoc_rule_list 
 generate_assoc_rules(3,confidence)
-print(assoc_rules)
