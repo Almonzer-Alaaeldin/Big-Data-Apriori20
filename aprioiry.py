@@ -124,9 +124,9 @@ def generate_assoc_rules(itemset_lvl,mini_conf): # final_count will be global af
         rule = str(item)+rule_saperator+key.replace(str(item), "")  #constract a rule fromat  "left_side --> right_side"
         rule = rule.replace(",,",",").replace(rule_saperator+",",rule_saperator)  # replace ",," with "," and remove first item comma 
         if rule[-1] == ',': rule = rule[:-1]   #delete last char if comma 
-        confidence= float (final_counts[key]) / final_counts[item] #calculate confidence
+        confidence= float (final_counts[key]) / final_counts[item] #calculate confidence support_count(all set)/support_count(left-side-set)
         if(confidence >= mini_conf):           #if it is above mini_conf will calc Lift and Leverage
-           RHS=rule[rule.find(rule_saperator)+len(rule_saperator):] #extract right hand side set (part after rule saperator)
+           RHS=rule[rule.find(rule_saperator)+len(rule_saperator):] #extract right hand side set (the part after rule saperator)
            Lift= float(final_counts[key])/(final_counts[item]*final_counts[RHS] ) #lift is support_count(all set)/count(left-side)*count(right-side)
            Leverage= float(final_counts[key])-float(final_counts[item]*final_counts[RHS]) #leverage is support_count(all set) - count(left-side)*count(right-side)
            entry= {"Rule":rule , "LHS":item ,"LHS count":final_counts[item] ,"RHS":RHS ,"RHS count":final_counts[RHS] , "set":key, "set count":final_counts[key], "Lift":Lift , "Leverage":Leverage, "confidence":confidence} 
