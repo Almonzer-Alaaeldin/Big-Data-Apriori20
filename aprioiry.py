@@ -3,6 +3,7 @@ import itertools as itr
 
 # Global Variables
 final_counts = {}
+assoc_rules=[]
 ############################# Start of Helper Functions ###############################
 
 def read_data_txt(file_path='ticdata2000.txt',data_size=(5822, 86)):
@@ -92,8 +93,28 @@ def itemset_support(uniqueData, previous_itemsets=[], itemset_lvl=1):
         
         itemset_support(uniqueData, itemsets, itemset_lvl)
         final_counts.update(itemsets_count)
-      
+############################################################## rule generation ###########################################33
+
+def generate_assoc_rules(itemset_lvl): # final_count will be global after testing
+  #global final_counts
+  global assoc_rules 
+  final_counts= {'0_0,0_1,0_3': 5774, '0_1,0_3': 5600, '0_2,0_1,0_5,0_0': 5813, '0_3,0_1,0_5,0_0': 5757, '0_4,0_1,0_5,0_0': 5679, '0_5': 5801, '0_6': 5426, '0_7,0_3,0_6': 5529, '0_8': 5791, '0_9': 5784, '0_10': 5799}
+  mylist=[]
+  rule_saperator=" --> "
+  for key in final_counts.keys():
+    if(key.count(',')== itemset_lvl-1):    #check if it is last Ck itemsets using number of cammas
+      mylist=(key.split(','))
+      for item in mylist:
+        rule = str(item)+rule_saperator+key.replace(str(item), "")
+        rule = rule.replace(",,",",").replace(rule_saperator+",",rule_saperator)  # replace ",," with "," and remove first item comma 
+        if rule[-1] == ',': rule = rule[:-1]
+        assoc_rules.append(rule)
+
+       
+
+
 ############################# End of Helper Functions ###############################
+
 
 
 # Main Program
@@ -110,5 +131,6 @@ data = set_apart_attr(slice_attr(data, SI))
 itemset_support(data)
 
 print(final_counts)
-        
-        
+### test assoc_rule_list 
+generate_assoc_rules(4)
+print(assoc_rules)
