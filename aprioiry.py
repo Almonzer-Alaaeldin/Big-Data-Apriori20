@@ -95,20 +95,38 @@ def itemset_support(uniqueData, previous_itemsets=[], itemset_lvl=1):
         final_counts.update(itemsets_count)
 ############################################################## rule generation ###########################################33
 
-def generate_assoc_rules(itemset_lvl): # final_count will be global after testing
+def generate_assoc_rules(itemset_lvl,mini_conf): # final_count will be global after testing
   #global final_counts
-  global assoc_rules 
-  final_counts= {'0_0,0_1,0_3': 5774, '0_1,0_3': 5600, '0_2,0_1,0_5,0_0': 5813, '0_3,0_1,0_5,0_0': 5757, '0_4,0_1,0_5,0_0': 5679, '0_5': 5801, '0_6': 5426, '0_7,0_3,0_6': 5529, '0_8': 5791, '0_9': 5784, '0_10': 5799}
-  mylist=[]
+  global assoc_rules
   rule_saperator=" --> "
+  final_counts= {   #lec example for testing 
+               '0_1':7,
+               '0_2': 6,
+               '0_3':6,
+               '0_4':2,
+               '0_5': 5,
+               '0_1,0_2':3 ,
+               '0_1,0_3':5,
+               '0_1,0_5':2,
+               '0_2,0_3':3,
+               '0_2,0_4':2,
+               '0_2,0_5':2,
+               '0_1,0_2,0_3':2 ,
+               '0_1,0_2,0_5':2,
+
+               }
+
   for key in final_counts.keys():
     if(key.count(',')== itemset_lvl-1):    #check if it is last Ck itemsets using number of cammas
       mylist=(key.split(','))
-      for item in mylist:
+      for item in mylist:    
         rule = str(item)+rule_saperator+key.replace(str(item), "")
         rule = rule.replace(",,",",").replace(rule_saperator+",",rule_saperator)  # replace ",," with "," and remove first item comma 
-        if rule[-1] == ',': rule = rule[:-1]
-        assoc_rules.append(rule)
+        if rule[-1] == ',': rule = rule[:-1]  
+        confidence= float (final_counts[key]) / final_counts[item] #calculate support
+        if(confidence >= mini_conf): 
+           entry= {"Rule":rule , "LHS":item ,"LHS count":final_counts[item] ,"set":key, "set count":final_counts[key], "confidence":confidence} 
+           assoc_rules.append(entry)
 
        
 
@@ -132,5 +150,5 @@ itemset_support(data)
 
 print(final_counts)
 ### test assoc_rule_list 
-generate_assoc_rules(4)
+generate_assoc_rules(3,confidence)
 print(assoc_rules)
