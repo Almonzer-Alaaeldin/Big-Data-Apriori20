@@ -95,7 +95,12 @@ def itemset_support(uniqueData, previous_itemsets=[], itemset_lvl=1):
         
         itemset_support(uniqueData, itemsets, itemset_lvl)
         final_counts.update(itemsets_count)
-############################################################## rule generation ###########################################33
+############################################################## rule generation ###########################################
+def get_ordered_key(unordered_key,final_counts):    # final_count will be global after testing
+  #global final_counts
+  if unordered_key in final_counts.keys(): return unordered_key 
+  for ordered_key in final_counts.keys():  #fetch orderd key and return its support count
+         if (set(unordered_key.split(',')) == set(ordered_key.split(','))): return ordered_key
 
 def generate_assoc_rules(itemset_lvl,mini_conf,NT=1000): # final_count will be global after testing
   # "NT" is the total number of transactions 
@@ -128,6 +133,7 @@ def generate_assoc_rules(itemset_lvl,mini_conf,NT=1000): # final_count will be g
         confidence= float (final_counts[key]) / final_counts[item] #calculate confidence
         if(confidence >= mini_conf):           #if it is above mini_conf will calc Lift and Leverage
            RHS=rule[rule.find(rule_saperator)+len(rule_saperator):] #extract right hand side set (part after rule saperator)
+           RHS=get_ordered_key(RHS,final_counts)     # check if RHS is in ordered and correct its format e.g RHS=0_0,0_1 and key=0_1,0_0 
            Lift= ( float(final_counts[key])/NT ) / ( float(final_counts[item])/NT * float(final_counts[RHS])/NT ) #lift is support(all set)/support(left-side)*support(right-side)
            Leverage=( float(final_counts[key])/NT ) - ( float(final_counts[item])/NT * float(final_counts[RHS])/NT ) #leverage is support(all set) - support(left-side)*support(right-side)
            entry= {"Rule":rule , "LHS":item ,"LHS count":final_counts[item] ,"RHS":RHS ,"RHS count":final_counts[RHS] , "set":key, "set count":final_counts[key], "Lift":Lift , "Leverage":Leverage, "confidence":confidence} 
