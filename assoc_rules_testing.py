@@ -9,7 +9,7 @@ assoc_rules=[]
 test_cases=[]
 ###################################### append diff test cases for final counts dict ####################333
 
-case= {   #tutorial example 
+case= {   #tutorial example    #level 3 case
                '0_1':7,
                '0_2': 6,
                '0_3':6,
@@ -24,8 +24,8 @@ case= {   #tutorial example
                '0_1,0_2,0_3':2 ,
                '0_1,0_2,0_5':2,
                }
-test_cases.append(case)
-case={    #lec example 
+test_cases.append(case) 
+case={    #lec example       #level 2 case
               'credit_bad':300,
               'credit_good':700,
               'free_housing':108,
