@@ -53,7 +53,7 @@ def generate_assoc_rules(itemset_lvl,mini_conf,NT=1000):
         rule = str(item)+rule_saperator+key.replace(str(item), "")  #constract a rule fromat  "left_side --> right_side"
         rule = rule.replace(",,",",").replace(rule_saperator+",",rule_saperator)  # replace ",," with "," and remove first item comma 
         if rule[-1] == ',': rule = rule[:-1]   #delete last char if comma 
-        confidence= float (final_counts[key]) / final_counts[item] #calculate confidence
+        confidence= float (final_counts[key]) / final_counts[item] #calculate confidence support_count(all set) / support_count(left-side-set)
         if(confidence >= mini_conf):           #if it is above mini_conf will calc Lift and Leverage
            RHS=rule[rule.find(rule_saperator)+len(rule_saperator):] #extract right hand side set (part after rule saperator)
            Lift= ( float(final_counts[key])/NT ) / ( float(final_counts[item])/NT * float(final_counts[RHS])/NT ) #lift is support(all set)/support(left-side)*support(right-side)
