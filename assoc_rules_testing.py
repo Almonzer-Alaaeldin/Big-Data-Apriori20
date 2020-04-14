@@ -70,8 +70,9 @@ def generate_assoc_rules(itemset_lvl,mini_conf,NT=1000): # final_count will be g
 
 # Main Program
 confidence = eval(input('Enter mini confidence: '))
-n = eval(input('Enter test case number: '))
-NT = eval(input('total number o transactions: '))
-final_counts= test_cases[n]
-print(test_cases[n])
-generate_assoc_rules(2,confidence,NT)
+index = eval(input('Enter test case index: '))
+NT = eval(input('total number of transactions: '))
+lvl= eval(input('number of levels: '))
+final_counts= test_cases[index]
+print(test_cases[index])
+generate_assoc_rules(lvl,confidence,NT)
