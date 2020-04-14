@@ -9,7 +9,7 @@ assoc_rules=[]
 test_cases=[]
 ###################################### append diff test cases for final counts dict ####################333
 
-case= {   #tutorial example   #level 3 case
+case= {   #tutorial example 
                '0_1':7,
                '0_2': 6,
                '0_3':6,
@@ -25,7 +25,7 @@ case= {   #tutorial example   #level 3 case
                '0_1,0_2,0_5':2,
                }
 test_cases.append(case)
-case={    #lec example   #level 2 case
+case={    #lec example 
               'credit_bad':300,
               'credit_good':700,
               'free_housing':108,
@@ -41,7 +41,7 @@ case={    #lec example   #level 2 case
 test_cases.append(case)
 ############################################################## rule generation ###########################################33
 
-def generate_assoc_rules(itemset_lvl,mini_conf,NT=1000): 
+def generate_assoc_rules(itemset_lvl,mini_conf,NT=1000): # final_count will be global after testing
   # "NT" is the total number of transactions 
   global final_counts
   global assoc_rules
@@ -53,7 +53,7 @@ def generate_assoc_rules(itemset_lvl,mini_conf,NT=1000):
         rule = str(item)+rule_saperator+key.replace(str(item), "")  #constract a rule fromat  "left_side --> right_side"
         rule = rule.replace(",,",",").replace(rule_saperator+",",rule_saperator)  # replace ",," with "," and remove first item comma 
         if rule[-1] == ',': rule = rule[:-1]   #delete last char if comma 
-        confidence= float (final_counts[key]) / final_counts[item] #calculate confidence support_count(all set) / support_count(left-side-set)
+        confidence= float (final_counts[key]) / final_counts[item] #calculate confidence
         if(confidence >= mini_conf):           #if it is above mini_conf will calc Lift and Leverage
            RHS=rule[rule.find(rule_saperator)+len(rule_saperator):] #extract right hand side set (part after rule saperator)
            Lift= ( float(final_counts[key])/NT ) / ( float(final_counts[item])/NT * float(final_counts[RHS])/NT ) #lift is support(all set)/support(left-side)*support(right-side)
@@ -61,6 +61,7 @@ def generate_assoc_rules(itemset_lvl,mini_conf,NT=1000):
            entry= {"Rule":rule , "LHS":item ,"LHS count":final_counts[item] ,"RHS":RHS ,"RHS count":final_counts[RHS] , "set":key, "set count":final_counts[key], "Lift":Lift , "Leverage":Leverage, "confidence":confidence} 
            assoc_rules.append(entry)
            pprint.pprint(entry, width=1)
+  if(len(assoc_rules)==0): print("All rules below confidence: ",mini_conf)
        
 
 
