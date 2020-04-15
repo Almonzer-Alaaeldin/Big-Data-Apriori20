@@ -3,7 +3,7 @@ import itertools as itr
 
 # Global Variables
 final_counts = {}
-############################# Start of Helper Functions ###############################
+# ############################# Start of Helper Functions ###############################
 
 def read_data_txt(file_path='ticdata2000.txt',data_size=(5822, 86)):
     ''' Read Training Data size=(5822, 86)'''
@@ -64,12 +64,13 @@ def itemset_support(uniqueData, previous_itemsets=[], itemset_lvl=1):
                         break
                 if items_exist_together:
                     itemsets_count[key] += 1
-                    items_exist_together = True
+                
+                items_exist_together = True
         
     # find items with unsufficient support       
     items_under_support = []
     for itemset in itemsets_count.keys():
-        if float(itemsets_count[itemset] / uniqueData.shape[0]) < support:
+        if float(itemsets_count[itemset]) / uniqueData.shape[0] < support:
             items_under_support.append(itemset)
     
     # remove items with insufficient support
@@ -93,7 +94,7 @@ def itemset_support(uniqueData, previous_itemsets=[], itemset_lvl=1):
         itemset_support(uniqueData, itemsets, itemset_lvl)
         final_counts.update(itemsets_count)
       
-############################# End of Helper Functions ###############################
+# ############################# End of Helper Functions ###############################
 
 
 # Main Program
@@ -109,6 +110,25 @@ data = set_apart_attr(slice_attr(data, SI))
 
 itemset_support(data)
 
-print(final_counts)
-        
-        
+# print(final_counts)
+
+
+
+# final_count={'0_0,0_1,0_2':3250, '0_0,0_1,0_3':2200, '2_3,3_4,1_0': 3012}  
+
+# import itertools as itr
+# comb = []
+# for itemset in final_count.keys():
+#     comb.append(list(itr.permutations(itemset.split(','), 3)))
+
+
+
+
+
+
+
+
+
+
+
+
