@@ -126,7 +126,7 @@ def generate_assoc_rules(itemset_lvl,mini_conf,NT):
         RHS=",".join(RHS) 
         rule= str(item)+rule_saperator+RHS 
         confidence= float (final_counts[key]) / final_counts[item] #calculate confidence
-        if(confidence > mini_conf):           #if it is above mini_conf will calc Lift and Leverage
+        if(confidence >= mini_conf):           #if it is above mini_conf will calc Lift and Leverage
            RHS=get_ordered_key(RHS)     # check if RHS is in ordered and correct its format e.g RHS=0_0,0_1 and key=0_1,0_00
            Lift= ( float(final_counts[key])/NT ) / ( float(final_counts[item])/NT * float(final_counts[RHS])/NT ) #lift is support(all set)/support(left-side)*support(right-side)
            Leverage=( float(final_counts[key])/NT ) - ( float(final_counts[item])/NT * float(final_counts[RHS])/NT ) #leverage is support(all set) - support(left-side)*support(right-side)
