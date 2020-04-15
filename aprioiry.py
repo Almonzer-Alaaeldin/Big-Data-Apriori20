@@ -6,7 +6,7 @@ import pprint
 # Global Variables
 final_counts = {}
 assoc_rules=[]
-############################# Start of Helper Functions ###############################
+# ############################# Start of Helper Functions ###############################
 
 def read_data_txt(file_path='ticdata2000.txt',data_size=(5822, 86)):
     ''' Read Training Data size=(5822, 86)'''
@@ -67,12 +67,13 @@ def itemset_support(uniqueData, previous_itemsets=[], itemset_lvl=1):
                         break
                 if items_exist_together:
                     itemsets_count[key] += 1
-                    items_exist_together = True
+                
+                items_exist_together = True
         
     # find items with unsufficient support       
     items_under_support = []
     for itemset in itemsets_count.keys():
-        if float(itemsets_count[itemset] / uniqueData.shape[0]) < support:
+        if float(itemsets_count[itemset]) / uniqueData.shape[0] < support:
             items_under_support.append(itemset)
     
     # remove items with insufficient support
@@ -95,55 +96,46 @@ def itemset_support(uniqueData, previous_itemsets=[], itemset_lvl=1):
         
         itemset_support(uniqueData, itemsets, itemset_lvl)
         final_counts.update(itemsets_count)
+      
+
 ############################################################## rule generation ###########################################
-def get_ordered_key(unordered_key,final_counts):    # final_count will be global after testing
-  #global final_counts
+def find_lvl():
+  global final_counts
+  lvls=[]
+  for key in final_counts.keys():
+    lvls.append(key.count(','))
+  return max(lvls)
+
+def get_ordered_key(unordered_key):    
+  global final_counts
   if unordered_key in final_counts.keys(): return unordered_key 
   for ordered_key in final_counts.keys():  #fetch orderd key and return its support count
          if (set(unordered_key.split(',')) == set(ordered_key.split(','))): return ordered_key
 
-def generate_assoc_rules(itemset_lvl,mini_conf,NT=1000): # final_count will be global after testing
-  # "NT" is the total number of transactions 
-  #global final_counts
+def generate_assoc_rules(itemset_lvl,mini_conf,NT): 
+   # "NT" is the total number of transactions 
+  global final_counts
   global assoc_rules
   rule_saperator=" --> "
-  final_counts= {   #lec example for testing 
-               '0_1':7,
-               '0_2': 6,
-               '0_3':6,
-               '0_4':2,
-               '0_5': 5,
-               '0_1,0_2':3 ,
-               '0_1,0_3':5,
-               '0_1,0_5':2,
-               '0_2,0_3':3,
-               '0_2,0_4':2,
-               '0_2,0_5':2,
-               '0_1,0_2,0_3':2 ,
-               '0_1,0_2,0_5':2,
-               }
-
   for key in final_counts.keys():
     if(key.count(',')== itemset_lvl-1):    #check if it is last Ck itemsets using commas (number of cammas == level-1)
       mylist=(key.split(','))
-      for item in mylist:    
-        rule = str(item)+rule_saperator+key.replace(str(item), "")  #constract a rule fromat  "left_side --> right_side"
-        rule = rule.replace(",,",",").replace(rule_saperator+",",rule_saperator)  # replace ",," with "," and remove first item comma 
-        if rule[-1] == ',': rule = rule[:-1]   #delete last char if comma 
+      for item in mylist:  
+        RHS=set(mylist)
+        RHS.remove(item)
+        RHS=",".join(RHS) 
+        rule= str(item)+rule_saperator+RHS 
         confidence= float (final_counts[key]) / final_counts[item] #calculate confidence
-        if(confidence >= mini_conf):           #if it is above mini_conf will calc Lift and Leverage
-           RHS=rule[rule.find(rule_saperator)+len(rule_saperator):] #extract right hand side set (part after rule saperator)
-           RHS=get_ordered_key(RHS,final_counts)     # check if RHS is in ordered and correct its format e.g RHS=0_0,0_1 and key=0_1,0_0 
+        if(confidence > mini_conf):           #if it is above mini_conf will calc Lift and Leverage
+           RHS=get_ordered_key(RHS)     # check if RHS is in ordered and correct its format e.g RHS=0_0,0_1 and key=0_1,0_00
            Lift= ( float(final_counts[key])/NT ) / ( float(final_counts[item])/NT * float(final_counts[RHS])/NT ) #lift is support(all set)/support(left-side)*support(right-side)
            Leverage=( float(final_counts[key])/NT ) - ( float(final_counts[item])/NT * float(final_counts[RHS])/NT ) #leverage is support(all set) - support(left-side)*support(right-side)
            entry= {"Rule":rule , "LHS":item ,"LHS count":final_counts[item] ,"RHS":RHS ,"RHS count":final_counts[RHS] , "set":key, "set count":final_counts[key], "Lift":Lift , "Leverage":Leverage, "confidence":confidence} 
            assoc_rules.append(entry)
            pprint.pprint(entry, width=1)
-       
-
-
-############################# End of Helper Functions ###############################
-
+  if(len(assoc_rules)==0): print("All rules below confidence: ",mini_conf)
+         
+# ############################# End of Helper Functions ###############################
 
 
 # Main Program
@@ -161,4 +153,4 @@ itemset_support(data)
 
 print(final_counts)
 
-generate_assoc_rules(3,confidence)
+generate_assoc_rules(find_lvl(),confidence,5822)
