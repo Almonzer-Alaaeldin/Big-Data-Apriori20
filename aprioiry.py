@@ -104,7 +104,7 @@ def find_lvl():
   lvls=[]
   for key in final_counts.keys():
     lvls.append(key.count(','))
-  return max(lvls)
+  return max(lvls)+1
 
 def get_ordered_key(unordered_key):    
   global final_counts
