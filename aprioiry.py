@@ -97,7 +97,6 @@ def itemset_support(uniqueData, previous_itemsets=[], itemset_lvl=1):
         itemset_support(uniqueData, itemsets, itemset_lvl)
         final_counts.update(itemsets_count)
       
-
 ############################################################## rule generation ###########################################
 def find_lvl():
   global final_counts
@@ -151,6 +150,9 @@ data = set_apart_attr(slice_attr(data, SI))
 
 itemset_support(data)
 
+
 print(final_counts)
 
 generate_assoc_rules(find_lvl(),confidence,5822)
+
+
