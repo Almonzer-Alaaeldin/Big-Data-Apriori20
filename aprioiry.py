@@ -4,7 +4,7 @@ import pandas as pd
 
 # Global Variables
 final_counts = {}
-assoc_rules= pd.DataFrame(columns=["Rule","LHS","LHS count","RHS","RHS count","set","set count","confidence", "Lift","Leverage"]) 
+assoc_rules= pd.DataFrame(columns=["Rule","LHS","LHS_count","set","set_count","confidence", "Lift","Leverage"]) 
            
 # ############################# Start of Helper Functions ###############################
 
@@ -107,8 +107,10 @@ def find_lvl():
 
 def get_ordered_key(unordered_key):    
   global final_counts
+  # if key is not in ordered form 
   if unordered_key in final_counts.keys(): return unordered_key 
-  for ordered_key in final_counts.keys():  #fetch orderd key and return its support count
+  # then fetch orderd key and return its support count
+  for ordered_key in final_counts.keys():  
          if (set(unordered_key.split(',')) == set(ordered_key.split(','))): return ordered_key
 
 def generate_assoc_rules(itemset_lvl,mini_conf,NT): 
@@ -117,35 +119,39 @@ def generate_assoc_rules(itemset_lvl,mini_conf,NT):
   global assoc_rules
   rule_saperator=" --> "
   for key in final_counts.keys():
-    if(key.count(',')== itemset_lvl-1):    #check if it is last Ck itemsets using commas (number of cammas == level-1)
+    #check if it is last Ck itemsets using commas (number of cammas == level-1)
+    if(key.count(',')== itemset_lvl-1):    
       mylist=(key.split(','))
       for item in mylist:  
         RHS=set(mylist)
         RHS.remove(item)
         RHS=",".join(RHS) 
         rule= str(item)+rule_saperator+RHS 
-        confidence= float (final_counts[key]) / final_counts[item] #calculate confidence
-        if(confidence >= mini_conf):           #if it is above mini_conf will calc Lift and Leverage
-           RHS=get_ordered_key(RHS)     # check if RHS is in ordered and correct its format e.g RHS=0_0,0_1 and key=0_1,0_00
-           Lift= ( float(final_counts[key])/NT ) / ( float(final_counts[item])/NT * float(final_counts[RHS])/NT ) #lift is support(all set)/support(left-side)*support(right-side)
-           Leverage=( float(final_counts[key])/NT ) - ( float(final_counts[item])/NT * float(final_counts[RHS])/NT ) #leverage is support(all set) - support(left-side)*support(right-side)
-           entry={"Rule":rule , "LHS":item ,"LHS count":final_counts[item] ,"RHS":RHS ,"RHS count":final_counts[RHS] , "set":key, "set count":final_counts[key], "Lift":Lift , "Leverage":Leverage, "confidence":confidence} 
+        #calculate confidence
+        confidence= float (final_counts[key]) / final_counts[item] 
+        #if it is above mini_conf will calc Lift and Leverage
+        if(confidence >= mini_conf):
+           # check if RHS is in ordered and correct its format e.g RHS=0_0,0_1 and key=0_1,0_00            
+           RHS=get_ordered_key(RHS)     
+           #lift is support(all set)/support(left-side)*support(right-side)
+           Lift= ( float(final_counts[key])/NT ) / ( float(final_counts[item])/NT * float(final_counts[RHS])/NT ) 
+           #leverage is support(all set) - support(left-side)*support(right-side)
+           Leverage=( float(final_counts[key])/NT ) - ( float(final_counts[item])/NT * float(final_counts[RHS])/NT ) 
+           entry={"Rule":rule , "LHS":item ,"LHS_count":final_counts[item] ,"set":key, "set_count":final_counts[key], "Lift":Lift , "Leverage":Leverage, "confidence":confidence} 
            assoc_rules=assoc_rules.append(entry, ignore_index=True, sort=False)
-          #  pprint.pprint(entry, width=1)
+           #print(entry, width=1)
   if(len(assoc_rules)==0): print("All rules below confidence: ",mini_conf)
          
 # ############################# End of Helper Functions ###############################
 
-
 # Main Program
-SI = eval(input('Starting Index: '))
+#SI = eval(input('Starting Index: '))
 support = eval(input('Enter Support: '))
 confidence = eval(input('Enter confidence: '))
 data = read_data_txt(file_path='ticdata2000.txt',data_size=(5822, 86))
-data = set_apart_attr(slice_attr(data, SI))
+data = set_apart_attr(slice_attr(data))
+# data = read_data_txt(file_path='test.txt',data_size=(3, 6))
 itemset_support(data)
-print(final_counts)
+#print(final_counts)
 generate_assoc_rules(find_lvl(),confidence,5822)
-pd.set_option('display.expand_frame_repr', False)
 print(assoc_rules)
-
