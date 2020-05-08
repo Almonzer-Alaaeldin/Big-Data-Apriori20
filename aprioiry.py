@@ -109,7 +109,7 @@ def get_ordered_key(unordered_key):
   global final_counts
   # if key is not in ordered form 
   if unordered_key in final_counts.keys(): return unordered_key 
-  # then fetch orderd key and return its support count
+  # then fetch orderd key and return its form
   for ordered_key in final_counts.keys():  
          if (set(unordered_key.split(',')) == set(ordered_key.split(','))): return ordered_key
 
