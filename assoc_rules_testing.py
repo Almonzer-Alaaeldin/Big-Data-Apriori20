@@ -9,7 +9,7 @@ assoc_rules= pd.DataFrame(columns=["Rule","LHS","LHS_count","set","set_count","c
 test_cases=[]
 ###################################### append diff test cases for final counts dict ####################333
 
-case= {   #tutorial example    #level 3 case
+case= {   #tutorial example    #level 3 case #transactions =5 
                '0_1':7,
                '0_2': 6,
                '0_3':6,

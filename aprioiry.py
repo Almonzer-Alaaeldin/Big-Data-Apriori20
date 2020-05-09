@@ -6,7 +6,7 @@ import pandas as pd
 final_counts = {}
 assoc_rules= pd.DataFrame(columns=["Rule","LHS","LHS_count","set","set_count","confidence", "Lift","Leverage"]) 
            
-# ############################# Start of Helper Functions ###############################
+############################### Start of Helper Functions ###############################
 
 def read_data_txt(file_path='ticdata2000.txt',data_size=(5822, 86)):
     ''' Read Training Data size=(5822, 86)'''
@@ -99,6 +99,7 @@ def itemset_support(uniqueData, previous_itemsets=[], itemset_lvl=1):
       
 ############################################################## rule generation ###########################################
 def find_lvl():
+  # itemsts level is the max number of join symbols(commas) added by one 
   global final_counts
   lvls=[]
   for key in final_counts.keys():
@@ -126,6 +127,7 @@ def generate_assoc_rules(itemset_lvl,mini_conf,NT):
         RHS=set(mylist)
         RHS.remove(item)
         RHS=",".join(RHS) 
+        #rule for an itemset is the itemset => rest of all itemsets
         rule= str(item)+rule_saperator+RHS 
         #calculate confidence
         confidence= float (final_counts[key]) / final_counts[item] 
@@ -137,9 +139,10 @@ def generate_assoc_rules(itemset_lvl,mini_conf,NT):
            Lift= ( float(final_counts[key])/NT ) / ( float(final_counts[item])/NT * float(final_counts[RHS])/NT ) 
            #leverage is support(all set) - support(left-side)*support(right-side)
            Leverage=( float(final_counts[key])/NT ) - ( float(final_counts[item])/NT * float(final_counts[RHS])/NT ) 
+           #create entry for assoc_rules dataframe
            entry={"Rule":rule , "LHS":item ,"LHS_count":final_counts[item] ,"set":key, "set_count":final_counts[key], "Lift":Lift , "Leverage":Leverage, "confidence":confidence} 
            assoc_rules=assoc_rules.append(entry, ignore_index=True, sort=False)
-           #print(entry, width=1)
+  #check if datafarme is empty then all rules are below mini confidence 
   if(len(assoc_rules)==0): print("All rules below confidence: ",mini_conf)
          
 # ############################# End of Helper Functions ###############################
@@ -152,6 +155,5 @@ data = read_data_txt(file_path='ticdata2000.txt',data_size=(5822, 86))
 data = set_apart_attr(slice_attr(data))
 # data = read_data_txt(file_path='test.txt',data_size=(3, 6))
 itemset_support(data)
-#print(final_counts)
 generate_assoc_rules(find_lvl(),confidence,5822)
 print(assoc_rules)
