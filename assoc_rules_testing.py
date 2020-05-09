@@ -25,7 +25,7 @@ case= {   #tutorial example    #level 3 case
                '0_1,0_2,0_5':2,
                }
 test_cases.append(case) 
-case={    #lec example       #level 2 case
+case={    #lec example    #level 2 case  # trasactions =1000
               'credit_bad':300,
               'credit_good':700,
               'free_housing':108,
@@ -94,7 +94,6 @@ index = eval(input('Enter test case index: '))
 NT = eval(input('total number of transactions: '))
 # final count is a dict with itemset as key and its support count as value  
 final_counts= test_cases[index]
-print(find_lvl())
+print("calculated number of levels is: ",find_lvl())
 generate_assoc_rules(find_lvl(),confidence,NT)
 print(assoc_rules)
-
