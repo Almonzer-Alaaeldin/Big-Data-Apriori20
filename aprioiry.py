@@ -9,8 +9,8 @@ assoc_rules= pd.DataFrame(columns=["Rule","LHS_count","set_count","confidence", 
            
 # ############################# Start of Helper Functions ###############################
 
-def read_data_txt(file_path='ticdata2000.txt',data_size=(5822, 86)):
-    ''' Read Training Data size=(5822, 86)'''
+def read_data_txt(file_path='ticdata2000.txt',data_size=(5822, 49)): 
+    ''' Read Training Data size=(5822, 49)'''
     # Prepare array for data
     data = np.zeros(data_size, dtype=np.dtype('U100'))
     
@@ -25,10 +25,9 @@ def read_data_txt(file_path='ticdata2000.txt',data_size=(5822, 86)):
     
     return data
     
-def slice_attr(full_data, selected_index=47):
-    # split for given index
-    # selected_index -= 1
-    return full_data[:, selected_index: selected_index+12]
+def slice_attr(full_data):
+    # return np.delete(full_data, np.s_[7:44], axis=1)
+    return np.append(full_data[:, 44: 49], full_data[:, 0:7], axis=1)
 
 def set_apart_attr(data):
     # Data with labeled items
@@ -124,14 +123,14 @@ def get_rules(key,mini_conf):
   return rules
 
 def map_to_attr_names(k):
-  attr_names={"0":"PPERSAUT","1":"PBESAUT","2":"PMOTSCO","3":"PVRAAUT","4":"PAANHANG","5":"PTRACTOR","6":"PWERKT","7":"PBROM","8":"PLEVEN","9":"PPERSONG","10":"PGEZONG","11":"PWAOREG","12":"PBRAND"}
+  attr_names={"0":"MOSTYPE","1":"MAANTHUI","2":"MGEMOMV","3":"MGEMLEEF","4":"MOSHOOFD","5":"MGODRK","6":"MGODPR","7":"PPERSAUT","8":"PBRAND","9":"AWAPART","10":"APERSAUT","11":"ABRAND"}
   l=list()
   l=k.split(",")
   for index in range(0,len(l)):
     col_number=l[index][l[index].find("_")+1:]
-    l[index]=l[index].replace(col_number,attr_names[col_number])
+    l[index]=l[index].replace("_"+col_number,"_"+attr_names[col_number])
   return ",".join(l)
-
+  
 def find_lvl():
   global final_counts
   lvls=[]
@@ -179,13 +178,12 @@ def generate_assoc_rules(itemset_lvl,mini_conf,NT):
 # ############################# End of Helper Functions ###############################
 
 
-# Main Program
+#Main Program
 support = eval(input('Enter Support: '))
 confidence = eval(input('Enter confidence: '))
-data = read_data_txt(file_path='ticdata2000.txt',data_size=(5822, 86))
-data = set_apart_attr(slice_attr(data)) 
+data = read_data_txt(file_path='ticdata2000.txt',data_size=(5822, 49))
+data = set_apart_attr(slice_attr(data))
 itemset_support(data)
-#print(final_counts)
 generate_assoc_rules(find_lvl(),confidence,5822)
 pd.set_option('display.max_colwidth', -1)
 pd.set_option("max_rows", -1)
