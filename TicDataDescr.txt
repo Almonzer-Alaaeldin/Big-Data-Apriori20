@@ -33,9 +33,9 @@ Nr Name Description Domain
 
 1 MOSTYPE Customer Subtype see L0
 
-2 MAANTHUI Number of houses 1-10
+2 MAANTHUI Number of houses 1 – 10
 
-3 MGEMOMV Avg size household 1-6
+3 MGEMOMV Avg size household 1 – 6
 
 4 MGEMLEEF Avg age see L1
 
@@ -43,7 +43,7 @@ Nr Name Description Domain
 
 6 MGODRK Roman catholic see L3
 
-7 MGODPR Protestant
+7 MGODPR Protestant ...
 
 8 MGODOV Other religion
 
@@ -117,91 +117,18 @@ Nr Name Description Domain
 
 43 MKOOPKLA Purchasing power class
 
-44 PWAPART Contribution private third party insurance see L4
+44 PWAPART Contribution private third party insurance see L4 
 
-45 PWABEDR Contribution third party insurance (firms)
+45 PPERSAUT Contribution car policies   ************************* (47) before the update
 
-46 PWALAND Contribution third party insurane (agriculture)
+46 PBRAND Contribution fire policies ************************** (59) before the update
 
-47 PPERSAUT Contribution car policies
+47 AWAPART Number of private third party insurance 1 - 12  *********************** (65) before the update
 
-48 PBESAUT Contribution delivery van policies
+48 APERSAUT Number of car policies  ***************** (68) before the update
 
-49 PMOTSCO Contribution motorcycle/scooter policies
+49 ABRAND Number of fire policies ********************* (80) before the update
 
-50 PVRAAUT Contribution lorry policies
-
-51 PAANHANG Contribution trailer policies
-
-52 PTRACTOR Contribution tractor policies
-
-53 PWERKT Contribution agricultural machines policies 
-
-54 PBROM Contribution moped policies
-
-55 PLEVEN Contribution life insurances
-
-56 PPERSONG Contribution private accident insurance policies
-
-57 PGEZONG Contribution family accidents insurance policies
-
-58 PWAOREG Contribution disability insurance policies
-
-59 PBRAND Contribution fire policies
-
-60 PZEILPL Contribution surfboard policies
-
-61 PPLEZIER Contribution boat policies
-
-62 PFIETS Contribution bicycle policies
-
-63 PINBOED Contribution property insurance policies
-
-64 PBYSTAND Contribution social security insurance policies
-
-65 AWAPART Number of private third party insurance 1-12
-
-66 AWABEDR Number of third party insurance (firms)
-
-67 AWALAND Number of third party insurane (agriculture)
-
-68 APERSAUT Number of car policies
-
-69 ABESAUT Number of delivery van policies
-
-70 AMOTSCO Number of motorcycle/scooter policies
-
-71 AVRAAUT Number of lorry policies
-
-72 AAANHANG Number of trailer policies
-
-73 ATRACTOR Number of tractor policies
-
-74 AWERKT Number of agricultural machines policies
-
-75 ABROM Number of moped policies
-
-76 ALEVEN Number of life insurances
-
-77 APERSONG Number of private accident insurance policies
-
-78 AGEZONG Number of family accidents insurance policies
-
-79 AWAOREG Number of disability insurance policies
-
-80 ABRAND Number of fire policies
-
-81 AZEILPL Number of surfboard policies
-
-82 APLEZIER Number of boat policies
-
-83 AFIETS Number of bicycle policies
-
-84 AINBOED Number of property insurance policies
-
-85 ABYSTAND Number of social security insurance policies
-
-86 CARAVAN Number of mobile home policies 0-1
 
 L0:
 	Value	Label
