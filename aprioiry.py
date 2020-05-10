@@ -190,3 +190,4 @@ generate_assoc_rules(find_lvl(),confidence,5822)
 pd.set_option('display.max_colwidth', -1)
 pd.set_option("max_rows", -1)
 print(assoc_rules)
+#display(assoc_rules) #in case if using notebook 
