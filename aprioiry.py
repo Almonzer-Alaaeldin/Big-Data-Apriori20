@@ -98,12 +98,40 @@ def itemset_support(uniqueData, previous_itemsets=[], itemset_lvl=1):
         final_counts.update(itemsets_count)
       
 ############################################################## rule generation ###########################################
+def get_rules(key,mini_conf):
+  global final_counts
+  itemsets=set(key.split(","))
+  # find all subset exists in itemset
+  item_subsets = chain.from_iterable(combinations(itemsets, len) 
+        for len in range(len(itemsets)+1))
+  item_subsets = list(map(frozenset, item_subsets))
+  #print(item_subsets)
+  rules = list()
+  # exclude empty subsets and subsets with length of itemsets
+  sub_itemsets = {subset for subset in item_subsets if (len(subset) != 0 and len(subset) != len(item_subsets))}
+  for subset in sub_itemsets:
+    left = subset
+    #right is all itemsets excluding left subsets 
+    right = itemsets.difference(subset)
+    # each rule is dict with two keys right and left with its values 
+    if len(right)!= 0 and len(left)!= 0: 
+        LHS=get_ordered_key(",".join(left))
+        #calculate confidence support_count(itemsets)/support_count(left-side)
+        confidence= float (final_counts[key]) / final_counts[LHS] 
+        if(confidence >= mini_conf):
+          rules.append( {"left":",".join(left),"right":",".join(right)} )
+          #print({"left":",".join(left),"right":",".join(right)},confidence)
+  return rules
+
 def map_to_attr_names(k):
   attr_names={"0":"PPERSAUT","1":"PBESAUT","2":"PMOTSCO","3":"PVRAAUT","4":"PAANHANG","5":"PTRACTOR","6":"PWERKT","7":"PBROM","8":"PLEVEN","9":"PPERSONG","10":"PGEZONG","11":"PWAOREG","12":"PBRAND"}
+  l=list()
   l=k.split(",")
   for index in range(0,len(l)):
     col_number=l[index][l[index].find("_")+1:]
-    l[index]=attr_names[col_number]
+    l[index]=l[index].replace(col_number,attr_names[col_number])
+  #print("map get this: ",k)
+  #print("map did this:", ",".join(l))
   return ",".join(l)
 
 def find_lvl():
@@ -128,33 +156,34 @@ def generate_assoc_rules(itemset_lvl,mini_conf,NT):
   rule_saperator=" --> "
   for key in final_counts.keys():
     #check if it is last Ck itemsets using commas (number of cammas == level-1)
-    if(key.count(',')== itemset_lvl-1):    
-      mylist=(key.split(','))
-      for item in mylist:  
-        RHS=set(mylist)
-        RHS.remove(item)
-        RHS=",".join(RHS) 
-        # rule= str(item)+rule_saperator+RHS 
+    if(key.count(',')== itemset_lvl-1):   
+      #print("current Ck is: " ,key) 
+      rules= get_rules(key,mini_conf)
+      for rule in rules:  
+        RHS=rule["right"]  
+        LHS=rule["left"]
+        LHS=get_ordered_key(LHS)
+        # #calculate confidence support_count(itemsets)/support_count(left-side)
+        # confidence= float (final_counts[key]) / final_counts[LHS] 
+        # #if it is above mini_conf will calc Lift and Leverage
+        # if(confidence >= mini_conf):
         maped_RHS= map_to_attr_names(RHS)
-        maped_item= map_to_attr_names(str(item))
-        maped_rule=maped_item+rule_saperator+maped_RHS
-        #calculate confidence
-        confidence= float (final_counts[key]) / final_counts[item] 
-        #if it is above mini_conf will calc Lift and Leverage
-        if(confidence >= mini_conf):
-           # check if RHS is in ordered and correct its format e.g RHS=0_0,0_1 and key=0_1,0_00            
-           RHS=get_ordered_key(RHS)     
-           #lift is support(all set)/support(left-side)*support(right-side)
-           Lift= ( float(final_counts[key])/NT ) / ( float(final_counts[item])/NT * float(final_counts[RHS])/NT ) 
-           #leverage is support(all set) - support(left-side)*support(right-side)
-           Leverage=( float(final_counts[key])/NT ) - ( float(final_counts[item])/NT * float(final_counts[RHS])/NT ) 
-           # itemsets names to given attributes names 
-           entry={"Rule":maped_rule , "LHS_count":final_counts[item],"set_count":final_counts[key], "Lift":Lift , "Leverage":Leverage, "confidence":confidence} 
-           assoc_rules=assoc_rules.append(entry, ignore_index=True, sort=False)
-           #print(entry, width=1)
+        maped_LHS= map_to_attr_names(LHS) 
+        maped_rule=maped_LHS+rule_saperator+maped_RHS
+        # check if RHS is in ordered and correct its format e.g RHS=0_0,0_1 and key=0_1,0_0            
+        RHS=get_ordered_key(RHS)     
+        #lift is support(all set)/support(left-side)*support(right-side)
+        Lift= ( float(final_counts[key])/NT ) / ( float(final_counts[LHS])/NT * float(final_counts[RHS])/NT ) 
+        #leverage is support(all set) - support(left-side)*support(right-side)
+        Leverage=( float(final_counts[key])/NT ) - ( float(final_counts[LHS])/NT * float(final_counts[RHS])/NT ) 
+        # itemsets names to given attributes names 
+        entry={"Rule":maped_rule , "LHS_count":final_counts[LHS],"set_count":final_counts[key], "Lift":Lift , "Leverage":Leverage, "confidence":confidence} 
+        assoc_rules=assoc_rules.append(entry, ignore_index=True, sort=False)
+        #print(entry)
   if(len(assoc_rules)==0): print("All rules below confidence: ",mini_conf)
          
 # ############################# End of Helper Functions ###############################
+
 
 # Main Program
 #SI = eval(input('Starting Index: '))
