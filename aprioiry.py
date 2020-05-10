@@ -1,6 +1,7 @@
 import numpy as np
 import itertools as itr
 import pandas as pd
+from itertools import combinations, chain
 
 # Global Variables
 final_counts = {}
@@ -120,7 +121,6 @@ def get_rules(key,mini_conf):
         confidence= float (final_counts[key]) / final_counts[LHS] 
         if(confidence >= mini_conf):
           rules.append( {"left":",".join(left),"right":",".join(right)} )
-          #print({"left":",".join(left),"right":",".join(right)},confidence)
   return rules
 
 def map_to_attr_names(k):
@@ -130,8 +130,6 @@ def map_to_attr_names(k):
   for index in range(0,len(l)):
     col_number=l[index][l[index].find("_")+1:]
     l[index]=l[index].replace(col_number,attr_names[col_number])
-  #print("map get this: ",k)
-  #print("map did this:", ",".join(l))
   return ",".join(l)
 
 def find_lvl():
@@ -163,10 +161,6 @@ def generate_assoc_rules(itemset_lvl,mini_conf,NT):
         RHS=rule["right"]  
         LHS=rule["left"]
         LHS=get_ordered_key(LHS)
-        # #calculate confidence support_count(itemsets)/support_count(left-side)
-        # confidence= float (final_counts[key]) / final_counts[LHS] 
-        # #if it is above mini_conf will calc Lift and Leverage
-        # if(confidence >= mini_conf):
         maped_RHS= map_to_attr_names(RHS)
         maped_LHS= map_to_attr_names(LHS) 
         maped_rule=maped_LHS+rule_saperator+maped_RHS
@@ -186,14 +180,11 @@ def generate_assoc_rules(itemset_lvl,mini_conf,NT):
 
 
 # Main Program
-#SI = eval(input('Starting Index: '))
 support = eval(input('Enter Support: '))
 confidence = eval(input('Enter confidence: '))
 data = read_data_txt(file_path='ticdata2000.txt',data_size=(5822, 86))
 data = set_apart_attr(slice_attr(data)) 
-# data = read_data_txt(file_path='test.txt',data_size=(3, 6))
 itemset_support(data)
-#print(final_counts)
 generate_assoc_rules(find_lvl(),confidence,5822)
 pd.set_option('display.max_colwidth', -1)
 print(assoc_rules)
